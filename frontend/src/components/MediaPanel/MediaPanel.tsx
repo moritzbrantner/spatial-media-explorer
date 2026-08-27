@@ -54,6 +54,35 @@ export function MediaPanel({
     };
   }, [project.videoUrl]);
 
+  useEffect(() => {
+    const video = videoRef.current;
+    if (
+      !video ||
+      typeof video.requestVideoFrameCallback !== "function" ||
+      typeof video.cancelVideoFrameCallback !== "function"
+    ) {
+      return;
+    }
+
+    let callbackId: number | null = null;
+    let active = true;
+    const syncPresentedFrame: VideoFrameRequestCallback = (_now, metadata) => {
+      if (!active) {
+        return;
+      }
+      onTimeChange(metadata.mediaTime);
+      callbackId = video.requestVideoFrameCallback(syncPresentedFrame);
+    };
+
+    callbackId = video.requestVideoFrameCallback(syncPresentedFrame);
+    return () => {
+      active = false;
+      if (callbackId !== null) {
+        video.cancelVideoFrameCallback(callbackId);
+      }
+    };
+  }, [onTimeChange, project.videoUrl]);
+
   const overlay = useMemo(() => {
     if (!selectedObservation || selectedObservation.frameIndex !== activeFrame || !mediaRect) {
       return null;
@@ -76,7 +105,11 @@ export function MediaPanel({
           src={project.videoUrl}
           controls
           preload="metadata"
-          onTimeUpdate={(event) => onTimeChange(event.currentTarget.currentTime)}
+          onTimeUpdate={(event) => {
+            if (typeof event.currentTarget.requestVideoFrameCallback !== "function") {
+              onTimeChange(event.currentTarget.currentTime);
+            }
+          }}
         />
         {overlay ? <div className="region-overlay" style={overlay} aria-hidden="true" /> : null}
       </div>
