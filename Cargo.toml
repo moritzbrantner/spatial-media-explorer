@@ -14,7 +14,7 @@ serde = { version = "1", features = ["derive", "rc"] }
 serde_json = "1"
 thiserror = "2"
 three-d-processing-core = { package = "moenarch-three-d-processing-core", path = "../rust-packages/crates/three-d/three-d-processing-core" }
-tokio = { version = "1", features = ["macros", "rt-multi-thread", "net"] }
+tokio = { version = "1", features = ["macros", "rt-multi-thread", "net", "sync"] }
 tower-http = { version = "0.6", features = ["fs", "trace"] }
 video-analysis-radiance-io = { package = "moenarch-video-analysis-radiance-io", path = "../rust-packages/crates/video/video-analysis-radiance-io" }
 
