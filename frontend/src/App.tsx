@@ -45,8 +45,16 @@ function writeFilters(filters: AnnotationFilters) {
   setOrDelete("q", filters.search.trim());
   setOrDelete("kind", filters.kind);
   setOrDelete("source", filters.sourceSelectorKind === "all" ? "" : filters.sourceSelectorKind);
-  filters.currentFrameOnly ? params.set("frame", "1") : params.delete("frame");
-  filters.showSparsePoints ? params.delete("sparse") : params.set("sparse", "0");
+  if (filters.currentFrameOnly) {
+    params.set("frame", "1");
+  } else {
+    params.delete("frame");
+  }
+  if (filters.showSparsePoints) {
+    params.delete("sparse");
+  } else {
+    params.set("sparse", "0");
+  }
   window.history.replaceState(null, "", url);
 }
 
