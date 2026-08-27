@@ -35,7 +35,12 @@ export function MediaPanel({
 
     const updateMediaRect = () => {
       setMediaRect(
-        containedMediaRect(video.clientWidth, video.clientHeight, video.videoWidth, video.videoHeight),
+        containedMediaRect(
+          video.clientWidth,
+          video.clientHeight,
+          video.videoWidth,
+          video.videoHeight,
+        ),
       );
     };
     updateMediaRect();
