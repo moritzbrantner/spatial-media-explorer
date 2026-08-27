@@ -4,11 +4,7 @@ import { AnnotationInspector } from "./components/AnnotationInspector/Annotation
 import { MediaPanel } from "./components/MediaPanel/MediaPanel";
 import { ProjectHeader } from "./components/ProjectHeader/ProjectHeader";
 import { ScenePanel } from "./components/ScenePanel/ScenePanel";
-import {
-  annotationAtId,
-  filterAnnotationViews,
-  type AnnotationFilters,
-} from "./lib/annotations";
+import { annotationAtId, filterAnnotationViews, type AnnotationFilters } from "./lib/annotations";
 import {
   createAnnotation,
   deleteAnnotation,
