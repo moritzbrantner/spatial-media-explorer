@@ -37,8 +37,9 @@ function observation(frameIndex: number): PointObservation {
 }
 
 describe("selection helpers", () => {
-  it("maps playback time to the nearest frame", () => {
+  it("maps playback time to the containing frame", () => {
     expect(frameIndexAtTime(1.5, 30)).toBe(45);
+    expect(frameIndexAtTime(10.75 / 30, 30)).toBe(10);
   });
 
   it("finds the nearest reconstructed camera frame", () => {
