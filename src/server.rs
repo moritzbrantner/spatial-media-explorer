@@ -114,10 +114,7 @@ pub async fn serve(
     let app = Router::new()
         .route("/api/health", get(health))
         .route("/api/project", get(project))
-        .route(
-            "/api/annotations",
-            get(annotations).post(create_annotation),
-        )
+        .route("/api/annotations", get(annotations).post(create_annotation))
         .route(
             "/api/annotations/{id}",
             put(update_annotation).delete(delete_annotation),
