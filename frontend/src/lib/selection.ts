@@ -33,16 +33,9 @@ export function pointById(project: ProjectSnapshot, pointId: number | null): Sce
   return project.points.find((point) => point.id === pointId) ?? null;
 }
 
-export function nearestObservation(
+export function observationAtFrame(
   observations: PointObservation[],
   frameIndex: number,
 ): PointObservation | null {
-  if (observations.length === 0) {
-    return null;
-  }
-  return observations.reduce((best, observation) =>
-    Math.abs(observation.frameIndex - frameIndex) < Math.abs(best.frameIndex - frameIndex)
-      ? observation
-      : best,
-  );
+  return observations.find((observation) => observation.frameIndex === frameIndex) ?? null;
 }

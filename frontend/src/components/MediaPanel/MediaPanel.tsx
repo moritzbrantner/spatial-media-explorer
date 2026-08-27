@@ -1,9 +1,6 @@
-import { useEffect, useMemo, useRef } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { containedMediaRect, regionOverlayRect, type MediaRect } from "../../lib/videoGeometry";
 import type { PointObservation, ProjectSnapshot } from "../../types";
-
-export type MediaPanelHandle = {
-  seek: (timeSeconds: number) => void;
-};
 
 type Props = {
   project: ProjectSnapshot;
@@ -21,6 +18,7 @@ export function MediaPanel({
   seekTime,
 }: Props) {
   const videoRef = useRef<HTMLVideoElement>(null);
+  const [mediaRect, setMediaRect] = useState<MediaRect | null>(null);
 
   useEffect(() => {
     if (seekTime === null || !videoRef.current) {
@@ -29,18 +27,34 @@ export function MediaPanel({
     videoRef.current.currentTime = seekTime;
   }, [seekTime]);
 
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) {
+      return;
+    }
+
+    const updateMediaRect = () => {
+      setMediaRect(
+        containedMediaRect(video.clientWidth, video.clientHeight, video.videoWidth, video.videoHeight),
+      );
+    };
+    updateMediaRect();
+    video.addEventListener("loadedmetadata", updateMediaRect);
+    const observer = new ResizeObserver(updateMediaRect);
+    observer.observe(video);
+
+    return () => {
+      video.removeEventListener("loadedmetadata", updateMediaRect);
+      observer.disconnect();
+    };
+  }, [project.videoUrl]);
+
   const overlay = useMemo(() => {
-    if (!selectedObservation) {
+    if (!selectedObservation || selectedObservation.frameIndex !== activeFrame || !mediaRect) {
       return null;
     }
-    const { region } = selectedObservation;
-    return {
-      left: `${(region.x / region.imageWidth) * 100}%`,
-      top: `${(region.y / region.imageHeight) * 100}%`,
-      width: `${(region.width / region.imageWidth) * 100}%`,
-      height: `${(region.height / region.imageHeight) * 100}%`,
-    };
-  }, [selectedObservation]);
+    return regionOverlayRect(selectedObservation.region, mediaRect);
+  }, [activeFrame, mediaRect, selectedObservation]);
 
   return (
     <section className="workspace-panel media-panel" aria-labelledby="media-heading">
@@ -63,7 +77,7 @@ export function MediaPanel({
       </div>
       <p className="panel-help">
         Playback follows the nearest reconstructed COLMAP camera. Selecting a 3D point reveals its
-        source observation in the video.
+        source observation only on frames that actually observe that point.
       </p>
     </section>
   );

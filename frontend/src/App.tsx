@@ -5,7 +5,7 @@ import { ObservationPanel } from "./components/ObservationPanel/ObservationPanel
 import { ProjectHeader } from "./components/ProjectHeader/ProjectHeader";
 import { ScenePanel } from "./components/ScenePanel/ScenePanel";
 import { fetchProject } from "./lib/api";
-import { frameIndexAtTime, nearestCamera, nearestObservation, pointById } from "./lib/selection";
+import { frameIndexAtTime, nearestCamera, observationAtFrame, pointById } from "./lib/selection";
 
 export function App() {
   const projectQuery = useQuery({ queryKey: ["project"], queryFn: fetchProject });
@@ -18,7 +18,7 @@ export function App() {
   const activeCamera = project ? nearestCamera(project.cameras, activeFrame) : null;
   const selectedPoint = project ? pointById(project, selectedPointId) : null;
   const selectedObservation = selectedPoint
-    ? nearestObservation(selectedPoint.observations, activeFrame)
+    ? observationAtFrame(selectedPoint.observations, activeFrame)
     : null;
 
   const handleSeek = useCallback((nextTime: number) => {

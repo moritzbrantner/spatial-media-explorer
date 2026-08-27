@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { frameIndexAtTime, nearestCamera } from "./selection";
-import type { CameraObservation } from "../types";
+import { frameIndexAtTime, nearestCamera, observationAtFrame } from "./selection";
+import type { CameraObservation, PointObservation } from "../types";
 
 function camera(frameIndex: number): CameraObservation {
   return {
@@ -18,6 +18,24 @@ function camera(frameIndex: number): CameraObservation {
   };
 }
 
+function observation(frameIndex: number): PointObservation {
+  return {
+    imageId: frameIndex,
+    imageName: `frame_${frameIndex}.png`,
+    frameIndex,
+    timeSeconds: frameIndex / 30,
+    region: {
+      x: 10,
+      y: 20,
+      width: 12,
+      height: 12,
+      imageWidth: 640,
+      imageHeight: 360,
+    },
+    binding: { schemaVersion: 1, spatial: {} },
+  };
+}
+
 describe("selection helpers", () => {
   it("maps playback time to the nearest frame", () => {
     expect(frameIndexAtTime(1.5, 30)).toBe(45);
@@ -25,5 +43,11 @@ describe("selection helpers", () => {
 
   it("finds the nearest reconstructed camera frame", () => {
     expect(nearestCamera([camera(10), camera(30), camera(50)], 34)?.frameIndex).toBe(30);
+  });
+
+  it("only returns point observations for the exact displayed frame", () => {
+    const observations = [observation(10), observation(20)];
+    expect(observationAtFrame(observations, 15)).toBeNull();
+    expect(observationAtFrame(observations, 20)?.frameIndex).toBe(20);
   });
 });
