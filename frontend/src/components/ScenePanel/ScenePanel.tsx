@@ -187,7 +187,14 @@ export function ScenePanel({
       renderer.dispose();
       container.replaceChildren();
     };
-  }, [annotations, onSelectAnnotation, onSelectPoint, project, selectedAnnotationId, showSparsePoints]);
+  }, [
+    annotations,
+    onSelectAnnotation,
+    onSelectPoint,
+    project,
+    selectedAnnotationId,
+    showSparsePoints,
+  ]);
 
   useEffect(() => {
     const marker = activeMarkerRef.current;
