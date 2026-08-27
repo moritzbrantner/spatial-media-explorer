@@ -1,14 +1,14 @@
 {
   "name": "spatial-media-explorer-frontend",
-  "private": true,
   "version": "0.1.0",
+  "private": true,
   "type": "module",
   "scripts": {
     "dev": "vite --host 0.0.0.0",
     "build": "tsc -b && vite build",
     "check-types": "tsc -b --pretty false",
     "format": "oxfmt --write src package.json tsconfig.json vite.config.ts",
-    "format:check": "oxfmt --write src package.json tsconfig.json vite.config.ts && git diff --exit-code -- src package.json tsconfig.json vite.config.ts",
+    "format:check": "oxfmt --check src package.json tsconfig.json vite.config.ts",
     "lint": "oxlint src",
     "test": "vitest run",
     "verify": "bun run format:check && bun run lint && bun run test && bun run build"

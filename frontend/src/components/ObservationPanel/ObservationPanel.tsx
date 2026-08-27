@@ -24,12 +24,17 @@ export function ObservationPanel({ point, onSeek }: Props) {
           <div className="observation-list">
             {point.observations.length > 0 ? (
               point.observations.map((observation) => (
-                <Button key={`${observation.imageId}-${observation.frameIndex}`} onClick={() => onSeek(observation.timeSeconds)}>
+                <Button
+                  key={`${observation.imageId}-${observation.frameIndex}`}
+                  onClick={() => onSeek(observation.timeSeconds)}
+                >
                   Frame {observation.frameIndex} · {observation.timeSeconds.toFixed(2)}s
                 </Button>
               ))
             ) : (
-              <p className="empty-state">This sampled point has no observation mapped to a video frame.</p>
+              <p className="empty-state">
+                This sampled point has no observation mapped to a video frame.
+              </p>
             )}
           </div>
         </>

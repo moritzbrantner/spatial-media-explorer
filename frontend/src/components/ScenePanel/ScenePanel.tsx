@@ -102,7 +102,7 @@ export function ScenePanel({ project, activeCamera, selectedPointId, onSelectPoi
       raycaster.setFromCamera(pointer, camera);
       const hit = raycaster.intersectObject(points, false)[0];
       const index = hit?.index;
-      onSelectPoint(typeof index === "number" ? project.points[index]?.id ?? null : null);
+      onSelectPoint(typeof index === "number" ? (project.points[index]?.id ?? null) : null);
     };
     renderer.domElement.addEventListener("pointerdown", onPointerDown);
 
@@ -156,7 +156,7 @@ export function ScenePanel({ project, activeCamera, selectedPointId, onSelectPoi
     const selectedPoint =
       selectedPointId === null
         ? null
-        : project.points.find((point) => point.id === selectedPointId) ?? null;
+        : (project.points.find((point) => point.id === selectedPointId) ?? null);
     marker.visible = selectedPoint !== null;
     if (selectedPoint) {
       marker.position.fromArray(selectedPoint.position);

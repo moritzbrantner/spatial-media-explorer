@@ -15,7 +15,8 @@ export function ProjectHeader({ project }: { project: ProjectSnapshot }) {
         <div>
           <dt>Points</dt>
           <dd>
-            {project.renderedPointCount.toLocaleString()} / {project.sourcePointCount.toLocaleString()}
+            {project.renderedPointCount.toLocaleString()} /{" "}
+            {project.sourcePointCount.toLocaleString()}
           </dd>
         </div>
         <div>

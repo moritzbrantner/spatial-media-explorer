@@ -33,7 +33,9 @@ export function App() {
     return (
       <main className="loading-shell error-shell">
         <strong>Could not load the spatial project.</strong>
-        <span>{projectQuery.error instanceof Error ? projectQuery.error.message : "Unknown error"}</span>
+        <span>
+          {projectQuery.error instanceof Error ? projectQuery.error.message : "Unknown error"}
+        </span>
       </main>
     );
   }
