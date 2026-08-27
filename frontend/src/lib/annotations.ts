@@ -1,8 +1,4 @@
-import type {
-  AuthoredSpatialAnnotation,
-  Region2d,
-  Vec3,
-} from "../types";
+import type { AuthoredSpatialAnnotation, Region2d, Vec3 } from "../types";
 
 export type AnnotationView = {
   record: AuthoredSpatialAnnotation;
@@ -21,6 +17,7 @@ export type AnnotationView = {
 export type AnnotationFilters = {
   search: string;
   currentFrameOnly: boolean;
+  kind: string;
   sourceSelectorKind: "all" | "frame" | "region_2d";
   showSparsePoints: boolean;
 };
@@ -129,6 +126,7 @@ export function filterAnnotationViews(
     .map(annotationView)
     .filter((view): view is AnnotationView => view !== null)
     .filter((view) => !filters.currentFrameOnly || view.frameIndex === activeFrame)
+    .filter((view) => filters.kind.length === 0 || view.kind === filters.kind)
     .filter(
       (view) =>
         filters.sourceSelectorKind === "all" ||
