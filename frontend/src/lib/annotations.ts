@@ -96,7 +96,10 @@ export function annotationView(record: AuthoredSpatialAnnotation): AnnotationVie
   if (pointId === null || frameIndex === null || !spatial) {
     return null;
   }
-  const source = parseRegion(record.binding.sourceSelector ?? record.annotation.selector, attributes);
+  const source = parseRegion(
+    record.binding.sourceSelector ?? record.annotation.selector,
+    attributes,
+  );
   const note =
     record.annotation.value?.type === "text" && typeof record.annotation.value.value === "string"
       ? record.annotation.value.value
