@@ -67,8 +67,8 @@ describe("authored annotation projections", () => {
         12,
       ),
     ).toHaveLength(0);
-    expect(filterAnnotationViews([record], { ...filters, currentFrameOnly: true }, 13)).toHaveLength(
-      0,
-    );
+    expect(
+      filterAnnotationViews([record], { ...filters, currentFrameOnly: true }, 13),
+    ).toHaveLength(0);
   });
 });
