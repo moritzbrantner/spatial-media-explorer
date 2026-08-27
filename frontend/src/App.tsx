@@ -17,7 +17,12 @@ import {
   updateAnnotation,
 } from "./lib/api";
 import { frameIndexAtTime, nearestCamera, observationAtFrame, pointById } from "./lib/selection";
-import type { AnnotationMutation, Region2d, WorkspaceSelection } from "./types";
+import type {
+  AnnotationMutation,
+  AuthoredSpatialAnnotation,
+  Region2d,
+  WorkspaceSelection,
+} from "./types";
 
 function readFilters(): AnnotationFilters {
   const params = new URLSearchParams(window.location.search);
@@ -26,8 +31,7 @@ function readFilters(): AnnotationFilters {
     search: params.get("q") ?? "",
     currentFrameOnly: params.get("frame") === "1",
     kind: params.get("kind") ?? "",
-    sourceSelectorKind:
-      source === "frame" || source === "region_2d" ? source : "all",
+    sourceSelectorKind: source === "frame" || source === "region2d" ? source : "all",
     showSparsePoints: params.get("sparse") !== "0",
   };
 }
@@ -71,6 +75,10 @@ export function App() {
   const createMutation = useMutation({
     mutationFn: createAnnotation,
     onSuccess: (record) => {
+      queryClient.setQueryData<AuthoredSpatialAnnotation[]>(["annotations"], (current = []) => [
+        ...current,
+        record,
+      ]);
       setSelection({ kind: "annotation", annotationId: record.annotation.id });
       setAssociationMode(false);
       refreshAnnotations();
@@ -80,6 +88,11 @@ export function App() {
     mutationFn: ({ id, mutation }: { id: string; mutation: AnnotationMutation }) =>
       updateAnnotation(id, mutation),
     onSuccess: (record) => {
+      queryClient.setQueryData<AuthoredSpatialAnnotation[]>(["annotations"], (current = []) =>
+        current.map((candidate) =>
+          candidate.annotation.id === record.annotation.id ? record : candidate,
+        ),
+      );
       setSelection({ kind: "annotation", annotationId: record.annotation.id });
       setAssociationMode(false);
       refreshAnnotations();
@@ -87,7 +100,10 @@ export function App() {
   });
   const deleteMutation = useMutation({
     mutationFn: deleteAnnotation,
-    onSuccess: () => {
+    onSuccess: (_result, annotationId) => {
+      queryClient.setQueryData<AuthoredSpatialAnnotation[]>(["annotations"], (current = []) =>
+        current.filter((candidate) => candidate.annotation.id !== annotationId),
+      );
       setSelection(null);
       setAssociationMode(false);
       refreshAnnotations();
@@ -124,25 +140,24 @@ export function App() {
   const selectedAnnotation =
     selection?.kind === "annotation" ? annotationAtId(records, selection.annotationId) : null;
   const selectedPointId =
-    selection?.kind === "point"
-      ? selection.pointId
-      : selectedAnnotation?.pointId ?? null;
+    selection?.kind === "point" ? selection.pointId : (selectedAnnotation?.pointId ?? null);
   const selectedPoint = project ? pointById(project, selectedPointId) : null;
   const selectedObservation = selectedPoint
     ? observationAtFrame(selectedPoint.observations, activeFrame)
     : null;
-  const selectedAnnotationId =
-    selection?.kind === "annotation" ? selection.annotationId : null;
+  const selectedAnnotationId = selection?.kind === "annotation" ? selection.annotationId : null;
 
   useEffect(() => {
     if (
       selection?.kind === "annotation" &&
+      records.some((record) => record.annotation.id === selection.annotationId) &&
+      !annotationsQuery.isFetching &&
       !visibleAnnotations.some((annotation) => annotation.id === selection.annotationId)
     ) {
       setSelection(null);
       setAssociationMode(false);
     }
-  }, [selection, visibleAnnotations]);
+  }, [annotationsQuery.isFetching, records, selection, visibleAnnotations]);
 
   const handleSeek = useCallback((nextTime: number) => {
     setSeekTime(nextTime);
@@ -170,7 +185,7 @@ export function App() {
 
   const handleCreate = useCallback(
     (label: string, note: string) => {
-      if (!project || !selectedPoint || selection?.kind !== "point") {
+      if (!selectedPoint || selection?.kind !== "point") {
         return;
       }
       createMutation.mutate({
@@ -180,7 +195,7 @@ export function App() {
         note,
       });
     },
-    [activeFrame, createMutation, project, selectedPoint, selection],
+    [activeFrame, createMutation, selectedPoint, selection],
   );
 
   const handleUpdate = useCallback(
@@ -278,13 +293,14 @@ export function App() {
             onChange={(event) =>
               setFilters((current) => ({
                 ...current,
-                sourceSelectorKind: event.currentTarget.value as AnnotationFilters["sourceSelectorKind"],
+                sourceSelectorKind: event.currentTarget
+                  .value as AnnotationFilters["sourceSelectorKind"],
               }))
             }
           >
             <option value="all">All</option>
             <option value="frame">Frame</option>
-            <option value="region_2d">Region</option>
+            <option value="region2d">Region</option>
           </select>
         </label>
         <label className="toolbar-check">
@@ -292,7 +308,10 @@ export function App() {
             type="checkbox"
             checked={filters.currentFrameOnly}
             onChange={(event) =>
-              setFilters((current) => ({ ...current, currentFrameOnly: event.currentTarget.checked }))
+              setFilters((current) => ({
+                ...current,
+                currentFrameOnly: event.currentTarget.checked,
+              }))
             }
           />
           <span>Current frame</span>
@@ -302,7 +321,10 @@ export function App() {
             type="checkbox"
             checked={filters.showSparsePoints}
             onChange={(event) =>
-              setFilters((current) => ({ ...current, showSparsePoints: event.currentTarget.checked }))
+              setFilters((current) => ({
+                ...current,
+                showSparsePoints: event.currentTarget.checked,
+              }))
             }
           />
           <span>Sparse points</span>
