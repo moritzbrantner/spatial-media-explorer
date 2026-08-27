@@ -1,0 +1,22 @@
+[package]
+name = "spatial-media-explorer"
+version = "0.1.0"
+edition = "2024"
+license = "MIT OR Apache-2.0"
+description = "Explore video frames, COLMAP camera poses, and sparse 3D correspondences together."
+repository = "https://github.com/moritzbrantner/spatial-media-explorer"
+
+[dependencies]
+axum = "0.8"
+clap = { version = "4.5", features = ["derive"] }
+media-core = { package = "moenarch-media-core", path = "../rust-packages/crates/media/media-core" }
+serde = { version = "1", features = ["derive", "rc"] }
+serde_json = "1"
+thiserror = "2"
+three-d-processing-core = { package = "moenarch-three-d-processing-core", path = "../rust-packages/crates/three-d/three-d-processing-core" }
+tokio = { version = "1", features = ["macros", "rt-multi-thread", "net"] }
+tower-http = { version = "0.6", features = ["fs", "trace"] }
+video-analysis-radiance-io = { package = "moenarch-video-analysis-radiance-io", path = "../rust-packages/crates/video/video-analysis-radiance-io" }
+
+[dev-dependencies]
+tempfile = "3"
