@@ -9,10 +9,10 @@ use media_core::annotations::{
 use media_core::{Timebase, Timestamp};
 use serde::{Deserialize, Serialize};
 use thiserror::Error;
+use three_d_processing_core::Point3d;
 use three_d_processing_core::annotations::{
     CoordinateFrameRef, CoordinateUnit, SpatialBinding, SpatialSelector,
 };
-use three_d_processing_core::Point3d;
 
 use crate::project::ProjectSnapshot;
 
@@ -210,7 +210,10 @@ impl AnnotationStore {
         let Some(path) = self.path.as_deref() else {
             return Ok(());
         };
-        if let Some(parent) = path.parent().filter(|parent| !parent.as_os_str().is_empty()) {
+        if let Some(parent) = path
+            .parent()
+            .filter(|parent| !parent.as_os_str().is_empty())
+        {
             fs::create_dir_all(parent)?;
         }
         let file = AnnotationFile {
@@ -253,12 +256,13 @@ fn build_record(
         region.validate()?;
     }
 
-    let source_selector = request
-        .region
-        .map(RegionInput::selector)
-        .unwrap_or(AnnotationSelector::Frame {
-            frame_index: request.frame_index,
-        });
+    let source_selector =
+        request
+            .region
+            .map(RegionInput::selector)
+            .unwrap_or(AnnotationSelector::Frame {
+                frame_index: request.frame_index,
+            });
     source_selector
         .validate()
         .map_err(|error| AnnotationStoreError::Media(error.to_string()))?;
@@ -281,9 +285,7 @@ fn build_record(
     let mut annotation = MediaAnnotation::new(id, "spatial_note")
         .label(label)
         .at(timestamp)
-        .source(
-            MediaSourceRef::source(project.video_name.clone()).source_kind("video"),
-        )
+        .source(MediaSourceRef::source(project.video_name.clone()).source_kind("video"))
         .selector(source_selector)
         .provenance(provenance)
         .attribute(FRAME_INDEX_ATTRIBUTE, request.frame_index.to_string())
@@ -297,7 +299,10 @@ fn build_record(
     if let Some(region) = request.region {
         annotation = annotation
             .attribute(REGION_IMAGE_WIDTH_ATTRIBUTE, region.image_width.to_string())
-            .attribute(REGION_IMAGE_HEIGHT_ATTRIBUTE, region.image_height.to_string());
+            .attribute(
+                REGION_IMAGE_HEIGHT_ATTRIBUTE,
+                region.image_height.to_string(),
+            );
     }
     annotation
         .validate()
