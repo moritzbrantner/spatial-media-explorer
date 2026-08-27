@@ -4,7 +4,7 @@ export function frameIndexAtTime(timeSeconds: number, fps: number): number {
   if (!Number.isFinite(timeSeconds) || !Number.isFinite(fps) || timeSeconds < 0 || fps <= 0) {
     return 0;
   }
-  return Math.round(timeSeconds * fps);
+  return Math.floor(timeSeconds * fps);
 }
 
 export function nearestCamera(
