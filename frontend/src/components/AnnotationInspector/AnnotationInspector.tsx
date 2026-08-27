@@ -112,7 +112,9 @@ export function AnnotationInspector({
             </div>
           ) : null}
           {associationMode ? (
-            <p className="association-hint">Drag a rectangle over the paused video to associate it.</p>
+            <p className="association-hint">
+              Drag a rectangle over the paused video to associate it.
+            </p>
           ) : null}
           {error ? <p className="form-error">{error}</p> : null}
 
