@@ -18,7 +18,7 @@ export type AnnotationFilters = {
   search: string;
   currentFrameOnly: boolean;
   kind: string;
-  sourceSelectorKind: "all" | "frame" | "region_2d";
+  sourceSelectorKind: "all" | "frame" | "region2d";
   showSparsePoints: boolean;
 };
 
@@ -63,7 +63,7 @@ function parseRegion(
   if (!isObject(selector) || typeof selector.kind !== "string") {
     return { kind: "unknown", region: null };
   }
-  if (selector.kind !== "region_2d") {
+  if (selector.kind !== "region2d") {
     return { kind: selector.kind, region: null };
   }
   const x = finiteNumber(selector.x);
