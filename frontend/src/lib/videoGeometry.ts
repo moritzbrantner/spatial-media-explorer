@@ -71,9 +71,14 @@ export function mediaSelectionToRegion(
   imageHeight: number,
 ): Region2d | null {
   if (
-    ![selection.left, selection.top, selection.width, selection.height, imageWidth, imageHeight].every(
-      Number.isFinite,
-    ) ||
+    ![
+      selection.left,
+      selection.top,
+      selection.width,
+      selection.height,
+      imageWidth,
+      imageHeight,
+    ].every(Number.isFinite) ||
     selection.width <= 0 ||
     selection.height <= 0 ||
     mediaRect.width <= 0 ||
