@@ -84,7 +84,7 @@ async fn delete_annotation(
 }
 
 fn api_error(error: AnnotationStoreError) -> (StatusCode, Json<ApiError>) {
-    let status = match error {
+    let status = match &error {
         AnnotationStoreError::NotFound(_) => StatusCode::NOT_FOUND,
         AnnotationStoreError::Invalid(_)
         | AnnotationStoreError::Spatial(_)
