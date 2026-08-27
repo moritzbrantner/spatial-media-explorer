@@ -62,3 +62,39 @@ export type ProjectSnapshot = {
   cameras: CameraObservation[];
   points: ScenePoint[];
 };
+
+export type AnnotationValueWire = {
+  type: string;
+  value: unknown;
+};
+
+export type MediaAnnotationWire = {
+  id: string;
+  kind: string;
+  label?: string;
+  timing?: unknown;
+  source?: unknown;
+  selector?: unknown;
+  score?: number;
+  provenance?: unknown[];
+  value?: AnnotationValueWire;
+  attributes?: Record<string, string>;
+};
+
+export type AuthoredSpatialAnnotation = {
+  annotation: MediaAnnotationWire;
+  binding: SpatialBindingWire;
+};
+
+export type AnnotationMutation = {
+  pointId: number;
+  frameIndex: number;
+  label: string;
+  note?: string;
+  region?: Region2d;
+};
+
+export type WorkspaceSelection =
+  | { kind: "point"; pointId: number }
+  | { kind: "annotation"; annotationId: string }
+  | null;
