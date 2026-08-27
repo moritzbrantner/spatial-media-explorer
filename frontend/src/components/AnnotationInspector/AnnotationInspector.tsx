@@ -145,13 +145,7 @@ export function AnnotationInspector({
         <div className="observation-list">
           {annotations.length > 0 ? (
             annotations.map((candidate) => (
-              <Button
-                key={candidate.id}
-                onClick={() => {
-                  onSelectAnnotation(candidate.id);
-                  onSeek(candidate.frameIndex / Math.max(1, 1));
-                }}
-              >
+              <Button key={candidate.id} onClick={() => onSelectAnnotation(candidate.id)}>
                 {candidate.label} · frame {candidate.frameIndex}
               </Button>
             ))
