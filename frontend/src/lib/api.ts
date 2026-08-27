@@ -1,8 +1,4 @@
-import type {
-  AnnotationMutation,
-  AuthoredSpatialAnnotation,
-  ProjectSnapshot,
-} from "../types";
+import type { AnnotationMutation, AuthoredSpatialAnnotation, ProjectSnapshot } from "../types";
 
 async function readJson<T>(response: Response, label: string): Promise<T> {
   if (!response.ok) {
