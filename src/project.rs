@@ -8,7 +8,7 @@ use three_d_processing_core::annotations::{
     CoordinateFrameRef, CoordinateUnit, SpatialBinding, SpatialEntityRef, SpatialSelector,
 };
 use three_d_processing_core::{CameraPose3d, PinholeIntrinsicsd, Point3d};
-use video_analysis_radiance_io::{ColmapCamera, ColmapImage, read_colmap_text_dir};
+use video_analysis_radiance_io::{ColmapCamera, read_colmap_text_dir};
 
 #[derive(Debug, Error)]
 pub enum ProjectError {
@@ -190,7 +190,8 @@ pub fn load_project(input: &ProjectInput) -> Result<ProjectSnapshot, ProjectErro
         );
         let mut observations = Vec::new();
         for track in &point.track {
-            let Some((image, frame_index, time_seconds)) = mapped_images.get(&track.image_id) else {
+            let Some((image, frame_index, time_seconds)) = mapped_images.get(&track.image_id)
+            else {
                 continue;
             };
             let Some(point2d) = image.points2d.get(track.point2d_index) else {
