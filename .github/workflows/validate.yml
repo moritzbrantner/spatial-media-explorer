@@ -1,0 +1,51 @@
+name: Validate
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Verify local-only source contract
+        run: |
+          jq -e '.schemaVersion == 2 and .cargo.localOnly == true' .coding-tooling.source-deps.json >/dev/null
+          jq -e '.cargo.patches | length == 3 and all(.[]; (.package | length > 0) and (.git | length > 0) and (.rev | test("^[0-9a-f]{40}$")) and (.localPath | length > 0))' .coding-tooling.source-deps.json >/dev/null
+
+      - name: Install Rust formatter
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt
+
+      - name: Check Rust formatting
+        run: rustfmt --edition 2024 --check src/*.rs
+
+      - name: Set up Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: "1.3.14"
+
+      - name: Install frontend dependencies
+        working-directory: frontend
+        run: bun install
+
+      - name: Verify frontend
+        working-directory: frontend
+        run: bun run verify
+
+      - name: Explain source verification boundary
+        run: |
+          echo "Rust compilation/tests require the exact sibling rust-packages source graph recorded in .coding-tooling.source-deps.json."
+          echo "Hosted CI stays repository-local; publication is not a development prerequisite."

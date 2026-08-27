@@ -1,0 +1,5 @@
+# Image list with two lines of data per image:
+1 1 0 0 0 0 0 0 1 frame_000001.png
+320 180 1
+2 1 0 0 0 -1 0 0 1 frame_000002.png
+320 180 1

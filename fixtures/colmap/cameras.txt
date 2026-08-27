@@ -1,0 +1,2 @@
+# Camera list with one line of data per camera:
+1 PINHOLE 640 360 500 500 320 180
