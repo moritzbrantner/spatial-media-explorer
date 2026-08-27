@@ -23,7 +23,11 @@ export function App() {
 
   const handleSeek = useCallback((nextTime: number) => {
     setSeekTime(nextTime);
-    setTimeSeconds(nextTime);
+  }, []);
+
+  const handleTimeChange = useCallback((time: number) => {
+    setTimeSeconds(time);
+    setSeekTime(null);
   }, []);
 
   if (projectQuery.isPending) {
@@ -48,10 +52,7 @@ export function App() {
           project={project}
           activeFrame={activeFrame}
           selectedObservation={selectedObservation}
-          onTimeChange={(time) => {
-            setTimeSeconds(time);
-            setSeekTime(null);
-          }}
+          onTimeChange={handleTimeChange}
           seekTime={seekTime}
         />
         <ScenePanel
