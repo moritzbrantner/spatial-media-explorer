@@ -48,6 +48,15 @@ export function MediaPanel({
   }, [seekTime]);
 
   useEffect(() => {
+    if (associationMode) {
+      videoRef.current?.pause();
+      return;
+    }
+    setDragStart(null);
+    setDragCurrent(null);
+  }, [associationMode]);
+
+  useEffect(() => {
     const video = videoRef.current;
     if (!video) {
       return;
@@ -157,7 +166,11 @@ export function MediaPanel({
           }}
         />
         {observationOverlay ? (
-          <div className="region-overlay reconstructed-region" style={observationOverlay} aria-hidden="true" />
+          <div
+            className="region-overlay reconstructed-region"
+            style={observationOverlay}
+            aria-hidden="true"
+          />
         ) : null}
         {annotationOverlays.map(({ annotation, rect }) => (
           <button
