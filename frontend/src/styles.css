@@ -23,8 +23,20 @@ body {
 }
 
 button,
+input,
+select,
+textarea,
 video {
   font: inherit;
+}
+
+input,
+select,
+textarea {
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.04);
+  color: inherit;
 }
 
 .app-shell {
@@ -82,10 +94,56 @@ video {
   font-variant-numeric: tabular-nums;
 }
 
+.annotation-toolbar {
+  display: flex;
+  align-items: end;
+  gap: 12px;
+  padding: 14px 4px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.annotation-toolbar label {
+  display: grid;
+  gap: 5px;
+  color: rgba(255, 255, 255, 0.56);
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.annotation-toolbar input[type="search"],
+.annotation-toolbar select {
+  min-height: 34px;
+  padding: 6px 9px;
+}
+
+.toolbar-search {
+  min-width: min(260px, 30vw);
+}
+
+.annotation-toolbar .toolbar-check {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  min-height: 34px;
+  white-space: nowrap;
+}
+
+.toolbar-check input {
+  accent-color: currentColor;
+}
+
+.toolbar-count {
+  margin-left: auto;
+  padding-bottom: 8px;
+  color: rgba(255, 255, 255, 0.55);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+}
+
 .workspace-grid {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) 260px;
-  min-height: calc(100vh - 132px);
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) 300px;
+  min-height: calc(100vh - 182px);
 }
 
 .workspace-panel,
@@ -139,11 +197,50 @@ video {
   object-fit: contain;
 }
 
-.region-overlay {
+.region-overlay,
+.authored-region-overlay,
+.region-selection {
   position: absolute;
-  pointer-events: none;
   border: 2px solid currentColor;
   box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.65);
+}
+
+.region-overlay {
+  pointer-events: none;
+}
+
+.reconstructed-region {
+  opacity: 0.7;
+  border-style: dashed;
+}
+
+.authored-region-overlay {
+  z-index: 2;
+  padding: 0;
+  cursor: pointer;
+  background: rgba(255, 255, 255, 0.05);
+  color: inherit;
+}
+
+.authored-region-overlay:hover,
+.authored-region-overlay.selected {
+  background: rgba(255, 255, 255, 0.13);
+  box-shadow:
+    0 0 0 1px rgba(0, 0, 0, 0.65),
+    0 0 0 2px currentColor;
+}
+
+.association-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  cursor: crosshair;
+  touch-action: none;
+}
+
+.region-selection {
+  pointer-events: none;
+  background: rgba(255, 255, 255, 0.08);
 }
 
 .scene-stage {
@@ -155,11 +252,21 @@ video {
 }
 
 .panel-help,
-.empty-state {
+.empty-state,
+.association-hint,
+.form-error {
   margin: 12px 0 0;
   color: rgba(255, 255, 255, 0.5);
   font-size: 12px;
   line-height: 1.55;
+}
+
+.association-hint {
+  color: rgba(255, 255, 255, 0.76);
+}
+
+.form-error {
+  color: #ffb4b4;
 }
 
 .point-meta {
@@ -170,10 +277,55 @@ video {
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
+.annotation-form {
+  display: grid;
+  gap: 12px;
+  margin-top: 14px;
+}
+
+.annotation-form label {
+  display: grid;
+  gap: 6px;
+  color: rgba(255, 255, 255, 0.62);
+  font-size: 12px;
+}
+
+.annotation-form input,
+.annotation-form textarea {
+  width: 100%;
+  padding: 8px 9px;
+  resize: vertical;
+}
+
+.annotation-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.annotation-summary {
+  display: grid;
+  gap: 4px;
+  margin-top: 12px;
+  color: rgba(255, 255, 255, 0.54);
+  font-size: 11px;
+}
+
+.inspector-section {
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
 .observation-list {
   display: grid;
   gap: 8px;
   margin-top: 14px;
+}
+
+.annotation-browser .observation-list {
+  max-height: 260px;
+  overflow: auto;
 }
 
 .loading-shell {
@@ -189,7 +341,15 @@ video {
   color: rgba(255, 255, 255, 0.6);
 }
 
-@media (max-width: 1050px) {
+@media (max-width: 1120px) {
+  .annotation-toolbar {
+    flex-wrap: wrap;
+  }
+
+  .toolbar-count {
+    margin-left: 0;
+  }
+
   .workspace-grid {
     grid-template-columns: 1fr 1fr;
   }
@@ -209,6 +369,19 @@ video {
   .metrics {
     width: 100%;
     justify-content: space-between;
+  }
+
+  .annotation-toolbar {
+    align-items: stretch;
+  }
+
+  .annotation-toolbar label,
+  .toolbar-search {
+    min-width: 100%;
+  }
+
+  .annotation-toolbar .toolbar-check {
+    min-width: auto;
   }
 
   .workspace-grid {

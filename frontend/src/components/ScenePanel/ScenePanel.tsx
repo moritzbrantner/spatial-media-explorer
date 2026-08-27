@@ -1,16 +1,30 @@
 import { useEffect, useRef } from "react";
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
+import type { AnnotationView } from "../../lib/annotations";
 import type { CameraObservation, ProjectSnapshot } from "../../types";
 
 type Props = {
   project: ProjectSnapshot;
   activeCamera: CameraObservation | null;
   selectedPointId: number | null;
+  annotations: AnnotationView[];
+  selectedAnnotationId: string | null;
+  showSparsePoints: boolean;
   onSelectPoint: (pointId: number | null) => void;
+  onSelectAnnotation: (annotationId: string) => void;
 };
 
-export function ScenePanel({ project, activeCamera, selectedPointId, onSelectPoint }: Props) {
+export function ScenePanel({
+  project,
+  activeCamera,
+  selectedPointId,
+  annotations,
+  selectedAnnotationId,
+  showSparsePoints,
+  onSelectPoint,
+  onSelectAnnotation,
+}: Props) {
   const containerRef = useRef<HTMLDivElement>(null);
   const activeMarkerRef = useRef<THREE.Mesh | null>(null);
   const selectedMarkerRef = useRef<THREE.Mesh | null>(null);
@@ -59,6 +73,7 @@ export function ScenePanel({ project, activeCamera, selectedPointId, onSelectPoi
       pointGeometry,
       new THREE.PointsMaterial({ size: Math.max(radius / 450, 0.008), sizeAttenuation: true }),
     );
+    points.visible = showSparsePoints;
     scene.add(points);
 
     const cameraGeometry = new THREE.BufferGeometry();
@@ -72,23 +87,39 @@ export function ScenePanel({ project, activeCamera, selectedPointId, onSelectPoi
       );
     }
     cameraGeometry.setAttribute("position", new THREE.Float32BufferAttribute(cameraVertices, 3));
-    scene.add(new THREE.LineSegments(cameraGeometry, new THREE.LineBasicMaterial()));
+    const cameraMaterial = new THREE.LineBasicMaterial();
+    scene.add(new THREE.LineSegments(cameraGeometry, cameraMaterial));
 
+    const activeMarkerMaterial = new THREE.MeshBasicMaterial();
     const activeMarker = new THREE.Mesh(
       new THREE.SphereGeometry(Math.max(radius / 100, 0.02), 16, 12),
-      new THREE.MeshBasicMaterial(),
+      activeMarkerMaterial,
     );
     activeMarker.visible = false;
     activeMarkerRef.current = activeMarker;
     scene.add(activeMarker);
 
+    const selectedMarkerMaterial = new THREE.MeshBasicMaterial();
     const selectedMarker = new THREE.Mesh(
       new THREE.SphereGeometry(Math.max(radius / 80, 0.015), 16, 12),
-      new THREE.MeshBasicMaterial(),
+      selectedMarkerMaterial,
     );
     selectedMarker.visible = false;
     selectedMarkerRef.current = selectedMarker;
     scene.add(selectedMarker);
+
+    const annotationGeometry = new THREE.SphereGeometry(Math.max(radius / 65, 0.02), 14, 10);
+    const annotationMeshes = annotations.map((annotation) => {
+      const material = new THREE.MeshBasicMaterial();
+      const mesh = new THREE.Mesh(annotationGeometry, material);
+      mesh.position.fromArray(annotation.position);
+      mesh.userData.annotationId = annotation.id;
+      if (annotation.id === selectedAnnotationId) {
+        mesh.scale.setScalar(1.45);
+      }
+      scene.add(mesh);
+      return mesh;
+    });
 
     scene.add(new THREE.GridHelper(radius * 3, 20));
 
@@ -100,6 +131,18 @@ export function ScenePanel({ project, activeCamera, selectedPointId, onSelectPoi
       pointer.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
       pointer.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
       raycaster.setFromCamera(pointer, camera);
+
+      const annotationHit = raycaster.intersectObjects(annotationMeshes, false)[0];
+      const annotationId = annotationHit?.object.userData.annotationId;
+      if (typeof annotationId === "string") {
+        onSelectAnnotation(annotationId);
+        return;
+      }
+
+      if (!showSparsePoints) {
+        onSelectPoint(null);
+        return;
+      }
       const hit = raycaster.intersectObject(points, false)[0];
       const index = hit?.index;
       onSelectPoint(typeof index === "number" ? (project.points[index]?.id ?? null) : null);
@@ -132,10 +175,26 @@ export function ScenePanel({ project, activeCamera, selectedPointId, onSelectPoi
       controls.dispose();
       pointGeometry.dispose();
       cameraGeometry.dispose();
+      cameraMaterial.dispose();
+      activeMarker.geometry.dispose();
+      activeMarkerMaterial.dispose();
+      selectedMarker.geometry.dispose();
+      selectedMarkerMaterial.dispose();
+      annotationGeometry.dispose();
+      for (const mesh of annotationMeshes) {
+        (mesh.material as THREE.Material).dispose();
+      }
       renderer.dispose();
       container.replaceChildren();
     };
-  }, [onSelectPoint, project]);
+  }, [
+    annotations,
+    onSelectAnnotation,
+    onSelectPoint,
+    project,
+    selectedAnnotationId,
+    showSparsePoints,
+  ]);
 
   useEffect(() => {
     const marker = activeMarkerRef.current;
@@ -176,7 +235,8 @@ export function ScenePanel({ project, activeCamera, selectedPointId, onSelectPoi
       </div>
       <div className="scene-stage" ref={containerRef} />
       <p className="panel-help">
-        Drag to orbit, scroll to zoom, and click a sparse point to inspect its source frames.
+        Drag to orbit, scroll to zoom, select a sparse point to annotate it, or select an authored
+        marker to edit its media association.
       </p>
     </section>
   );

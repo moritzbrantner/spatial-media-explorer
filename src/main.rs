@@ -23,6 +23,9 @@ struct Args {
     /// Maximum number of sparse points sent to the browser. Sampling is deterministic.
     #[arg(long, default_value_t = 100_000)]
     max_points: usize,
+    /// Optional JSON sidecar used to persist authored spatial annotations.
+    #[arg(long)]
+    annotations: Option<PathBuf>,
     /// Built frontend directory.
     #[arg(long, default_value = "frontend/dist")]
     frontend_dir: PathBuf,
@@ -43,6 +46,13 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     })?;
     let address = SocketAddr::new(IpAddr::V4(Ipv4Addr::LOCALHOST), args.port);
     println!("Spatial Media Explorer: http://{address}");
-    serve(address, snapshot, args.video, args.frontend_dir).await?;
+    serve(
+        address,
+        snapshot,
+        args.video,
+        args.frontend_dir,
+        args.annotations,
+    )
+    .await?;
     Ok(())
 }

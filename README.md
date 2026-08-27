@@ -8,7 +8,10 @@ The MVP opens one video beside an existing COLMAP text reconstruction and keeps 
 - the 3D view renders the sparse COLMAP point cloud and camera directions;
 - clicking a sparse point lists the source frames that observed it;
 - selecting an observation seeks the video and overlays the corresponding 2D keypoint region;
-- backend correspondences are built with the real `MediaAnnotation` selector vocabulary and `SpatialBinding` types rather than app-local replacements.
+- a selected sparse point can be turned into a labeled, persisted spatial annotation at the current video frame;
+- authored annotations can be edited, deleted, selected from either view, and associated with a dragged source-video region;
+- annotation filters cover search, kind, current frame, source selector type, and sparse-point visibility, with filter state mirrored into the URL;
+- backend correspondences and authored records compose the real `MediaAnnotation` and `SpatialBinding` contracts rather than app-local replacements.
 
 ## MVP input contract
 
@@ -55,8 +58,11 @@ cargo run -- \
   --video /path/to/video.mp4 \
   --colmap /path/to/sparse/0 \
   --fps 30 \
-  --frame-offset -1
+  --frame-offset -1 \
+  --annotations /path/to/project.spatial-annotations.json
 ```
+
+`--annotations` is optional. Without it, authoring works for the current process but changes remain in memory. Supplying an explicit sidecar path enables reload-safe persistence without modifying the source video or COLMAP reconstruction. The sidecar is a product-level composition of validated `MediaAnnotation` and `SpatialBinding` values; it does not redefine either source-owned contract.
 
 Open `http://127.0.0.1:1420`.
 
@@ -68,6 +74,17 @@ bun run dev
 ```
 
 Vite serves `http://127.0.0.1:5173` and proxies `/api` and `/media` to the Rust process.
+
+## Authoring workflow
+
+1. Pause or scrub the video to the desired frame.
+2. Select a sparse point in the 3D reconstruction.
+3. Create a labeled annotation in the inspector, with an optional note.
+4. Select the authored marker and choose **Associate region** to pause the media and drag an exact pixel region over the source video.
+5. Select the authored marker from the 3D scene, its media overlay, or the filtered inspector list to seek back to its associated frame.
+6. Edit or delete the record from the inspector. Press `Escape` to clear selection or leave region-association mode.
+
+Authored point locations remain tied to rendered COLMAP points in this slice. Free-space placement, boxes, spheres, trajectories, and scene entities remain later extensions.
 
 ## Verification
 
@@ -84,4 +101,4 @@ bun run verify
 
 ## Deliberate MVP boundaries
 
-This repository does not yet own reconstruction, video frame extraction, COLMAP execution, Gaussian-splat rendering, annotation persistence, trajectories, georeferencing, or editing. It consumes existing reconstruction output and lets the first product experience determine which shared spatial primitives are actually missing.
+This repository does not own reconstruction, video frame extraction, COLMAP execution, Gaussian-splat rendering, trajectories, georeferencing, a universal scene graph, or generic editor infrastructure. Annotation persistence and editing remain deliberately product-scoped: the explorer only composes the shared media and spatial contracts and uses existing COLMAP points as authoring anchors. New shared abstractions should be introduced only when this product workflow demonstrates a concrete missing capability.

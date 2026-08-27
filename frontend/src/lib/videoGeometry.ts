@@ -63,3 +63,46 @@ export function regionOverlayRect(region: Region2d, mediaRect: MediaRect): Media
     height: (region.height / region.imageHeight) * mediaRect.height,
   };
 }
+
+export function mediaSelectionToRegion(
+  selection: MediaRect,
+  mediaRect: MediaRect,
+  imageWidth: number,
+  imageHeight: number,
+): Region2d | null {
+  if (
+    ![
+      selection.left,
+      selection.top,
+      selection.width,
+      selection.height,
+      imageWidth,
+      imageHeight,
+    ].every(Number.isFinite) ||
+    selection.width <= 0 ||
+    selection.height <= 0 ||
+    mediaRect.width <= 0 ||
+    mediaRect.height <= 0 ||
+    imageWidth <= 0 ||
+    imageHeight <= 0
+  ) {
+    return null;
+  }
+
+  const left = Math.max(selection.left, mediaRect.left);
+  const top = Math.max(selection.top, mediaRect.top);
+  const right = Math.min(selection.left + selection.width, mediaRect.left + mediaRect.width);
+  const bottom = Math.min(selection.top + selection.height, mediaRect.top + mediaRect.height);
+  if (right <= left || bottom <= top) {
+    return null;
+  }
+
+  return {
+    x: ((left - mediaRect.left) / mediaRect.width) * imageWidth,
+    y: ((top - mediaRect.top) / mediaRect.height) * imageHeight,
+    width: ((right - left) / mediaRect.width) * imageWidth,
+    height: ((bottom - top) / mediaRect.height) * imageHeight,
+    imageWidth,
+    imageHeight,
+  };
+}
