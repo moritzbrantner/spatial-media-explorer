@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "profile": "repository-foundation-v1",
+  "tiers": {
+    "fast": ["format:check", "lint", "typecheck", "build", "test:unit"]
+  },
+  "requiredCapabilities": ["format:check", "lint", "typecheck", "build", "test:unit"],
+  "capabilityCommands": {
+    "spatial-media-explorer": {
+      "format:check": ["bash", "-lc", "rustfmt --edition 2024 --check src/*.rs && bun run --cwd frontend format:check"],
+      "lint": ["bun", "run", "--cwd", "frontend", "lint"],
+      "typecheck": ["bun", "run", "--cwd", "frontend", "check-types"],
+      "build": ["bun", "run", "--cwd", "frontend", "build"],
+      "test:unit": ["bun", "run", "--cwd", "frontend", "test"]
+    }
+  }
+}
