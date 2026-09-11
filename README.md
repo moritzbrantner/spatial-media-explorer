@@ -34,7 +34,7 @@ git clone https://github.com/moritzbrantner/moenarch-foundation.git
 git -C moenarch-foundation checkout fb51ab465ecd4d8086ac37ad0a9a2268b570e09f
 
 git clone https://github.com/moritzbrantner/video-to-3d.git
-git -C video-to-3d checkout 382614f684c3624f338dd8aa3db1e8ddbe6fc1db
+git -C video-to-3d checkout 3e3cb20aa2a9b79ef11d60529044349c0c54d302
 
 git clone https://github.com/moritzbrantner/rust-packages.git
 git -C rust-packages checkout 196820c7b681326ed77c01bcd7ace7da76c9fcbb
