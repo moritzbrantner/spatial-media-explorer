@@ -27,23 +27,23 @@ The current MVP supports exact pinhole intrinsics for COLMAP `PINHOLE` and `SIMP
 
 ## Source-first setup
 
-The Rust app consumes each capability from its current source owner. `moenarch-media-core` comes from `moenarch-foundation`, sparse COLMAP text interchange comes from `video-to-3d-core`, and the still-unreconciled `SpatialBinding`/camera geometry contract remains temporarily sourced from `rust-packages`. Publication is not required for ordinary development.
+The Rust app consumes each capability from its current source owner. `moenarch-media-core` comes from `moenarch-foundation`, the reusable `SpatialBinding`/camera geometry seam comes from `three-d-spatial` in `3d-lab`, and sparse COLMAP text interchange comes from `video-to-3d-core`. Publication is not required for ordinary development.
 
 ```bash
 git clone https://github.com/moritzbrantner/moenarch-foundation.git
 git -C moenarch-foundation checkout fb51ab465ecd4d8086ac37ad0a9a2268b570e09f
 
+git clone https://github.com/moritzbrantner/3d-lab.git
+git -C 3d-lab checkout 13d00fc7b69b1aceedbf4f3a67ecd2e3f4b36476
+
 git clone https://github.com/moritzbrantner/video-to-3d.git
 git -C video-to-3d checkout 3e3cb20aa2a9b79ef11d60529044349c0c54d302
-
-git clone https://github.com/moritzbrantner/rust-packages.git
-git -C rust-packages checkout 196820c7b681326ed77c01bcd7ace7da76c9fcbb
 
 git clone https://github.com/moritzbrantner/spatial-media-explorer.git
 cd spatial-media-explorer
 ```
 
-The exact expected source repositories and revisions are recorded in `.coding-tooling.source-deps.json`. The remaining `rust-packages` dependency is migration debt tracked by `moritzbrantner/rust-packages#179`, not a general ownership boundary.
+The exact expected source repositories and revisions are recorded in `.coding-tooling.source-deps.json`. The explorer no longer needs a sibling `rust-packages` checkout; broader historical spatial-processing surfaces remain tracked separately by `moritzbrantner/rust-packages#179` rather than being pulled into this product.
 
 ## Run
 
