@@ -47,5 +47,5 @@ jobs:
 
       - name: Explain source verification boundary
         run: |
-          echo "Rust compilation/tests require the exact sibling rust-packages source graph recorded in .coding-tooling.source-deps.json."
+          echo "Rust compilation/tests require the exact sibling source graph recorded in .coding-tooling.source-deps.json."
           echo "Hosted CI stays repository-local; publication is not a development prerequisite."

@@ -8,7 +8,7 @@ use three_d_processing_core::annotations::{
     CoordinateFrameRef, CoordinateUnit, SpatialBinding, SpatialEntityRef, SpatialSelector,
 };
 use three_d_processing_core::{CameraPose3d, PinholeIntrinsicsd, Point3d};
-use video_analysis_radiance_io::{ColmapCamera, read_colmap_text_dir};
+use video_to_3d_core::colmap::{ColmapCamera, read_colmap_text_dir};
 
 #[derive(Debug, Error)]
 pub enum ProjectError {

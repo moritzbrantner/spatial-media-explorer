@@ -27,18 +27,23 @@ The current MVP supports exact pinhole intrinsics for COLMAP `PINHOLE` and `SIMP
 
 ## Source-first setup
 
-The Rust app intentionally consumes the spatial/media crates from a sibling `rust-packages` checkout. Publication is not required for ordinary development.
+The Rust app consumes each capability from its current source owner. `moenarch-media-core` comes from `moenarch-foundation`, sparse COLMAP text interchange comes from `video-to-3d-core`, and the still-unreconciled `SpatialBinding`/camera geometry contract remains temporarily sourced from `rust-packages`. Publication is not required for ordinary development.
 
 ```bash
+git clone https://github.com/moritzbrantner/moenarch-foundation.git
+git -C moenarch-foundation checkout fb51ab465ecd4d8086ac37ad0a9a2268b570e09f
+
+git clone https://github.com/moritzbrantner/video-to-3d.git
+git -C video-to-3d checkout 3e3cb20aa2a9b79ef11d60529044349c0c54d302
+
 git clone https://github.com/moritzbrantner/rust-packages.git
-cd rust-packages
-git checkout 196820c7b681326ed77c01bcd7ace7da76c9fcbb
-cd ..
+git -C rust-packages checkout 196820c7b681326ed77c01bcd7ace7da76c9fcbb
+
 git clone https://github.com/moritzbrantner/spatial-media-explorer.git
 cd spatial-media-explorer
 ```
 
-The exact expected source revision is also recorded in `.coding-tooling.source-deps.json`.
+The exact expected source repositories and revisions are recorded in `.coding-tooling.source-deps.json`. The remaining `rust-packages` dependency is migration debt tracked by `moritzbrantner/rust-packages#179`, not a general ownership boundary.
 
 ## Run
 
@@ -88,7 +93,7 @@ Authored point locations remain tied to rendered COLMAP points in this slice. Fr
 
 ## Verification
 
-Repository-local hosted CI verifies the source dependency contract, Rust formatting, frontend formatting/lint/tests, and the frontend production build. Rust compilation and Rust tests run in a local/source-enabled workspace where the exact sibling `rust-packages` revision is available.
+Repository-local hosted CI verifies the source dependency contract, Rust formatting, frontend formatting/lint/tests, and the frontend production build. Rust compilation and Rust tests run in a local/source-enabled workspace using the exact sibling source graph recorded in `.coding-tooling.source-deps.json`.
 
 Useful local checks:
 
