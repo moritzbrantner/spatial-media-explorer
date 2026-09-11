@@ -10,10 +10,10 @@
         "localPath": "../moenarch-foundation/crates/media/media-core"
       },
       {
-        "package": "moenarch-three-d-processing-core",
-        "git": "https://github.com/moritzbrantner/rust-packages",
-        "rev": "196820c7b681326ed77c01bcd7ace7da76c9fcbb",
-        "localPath": "../rust-packages/crates/three-d/three-d-processing-core"
+        "package": "three-d-spatial",
+        "git": "https://github.com/moritzbrantner/3d-lab",
+        "rev": "13d00fc7b69b1aceedbf4f3a67ecd2e3f4b36476",
+        "localPath": "../3d-lab/crates/three-d-spatial"
       },
       {
         "package": "video-to-3d-core",
