@@ -18,7 +18,7 @@
       {
         "package": "video-to-3d-core",
         "git": "https://github.com/moritzbrantner/video-to-3d",
-        "rev": "382614f684c3624f338dd8aa3db1e8ddbe6fc1db",
+        "rev": "3e3cb20aa2a9b79ef11d60529044349c0c54d302",
         "localPath": "../video-to-3d/crates/video-to-3d-core"
       }
     ]
