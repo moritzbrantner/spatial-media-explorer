@@ -5,9 +5,9 @@
     "patches": [
       {
         "package": "moenarch-media-core",
-        "git": "https://github.com/moritzbrantner/rust-packages",
-        "rev": "196820c7b681326ed77c01bcd7ace7da76c9fcbb",
-        "localPath": "../rust-packages/crates/media/media-core"
+        "git": "https://github.com/moritzbrantner/moenarch-foundation",
+        "rev": "fb51ab465ecd4d8086ac37ad0a9a2268b570e09f",
+        "localPath": "../moenarch-foundation/crates/media/media-core"
       },
       {
         "package": "moenarch-three-d-processing-core",
