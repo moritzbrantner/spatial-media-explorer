@@ -13,7 +13,7 @@ media-core = { package = "moenarch-media-core", path = "../moenarch-foundation/c
 serde = { version = "1", features = ["derive", "rc"] }
 serde_json = "1"
 thiserror = "2"
-three-d-processing-core = { package = "moenarch-three-d-processing-core", path = "../rust-packages/crates/three-d/three-d-processing-core" }
+three-d-processing-core = { package = "three-d-spatial", path = "../3d-lab/crates/three-d-spatial" }
 tokio = { version = "1", features = ["macros", "rt-multi-thread", "net", "sync"] }
 tower-http = { version = "0.6", features = ["fs", "trace"] }
 video-to-3d-core = { path = "../video-to-3d/crates/video-to-3d-core" }
