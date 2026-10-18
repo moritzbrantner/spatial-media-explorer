@@ -19,4 +19,4 @@ tower-http = { version = "0.6", features = ["fs", "trace"] }
 video-to-3d-core = { path = "../video-to-3d/crates/video-to-3d-core" }
 
 [dev-dependencies]
-tempfile = "3"
+tempfile = "=3.27.0"
